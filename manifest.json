@@ -1,19 +1,21 @@
 {
   "manifest_version": 3,
-  "name": "YouTube Q&A Assistant",
+  "name": "YouTube Video Q&A",
   "version": "1.0",
-  "permissions": ["activeTab", "scripting", "storage"],
-
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "128": "youtu.png"
-    }
+  "description": "Ask questions about the YouTube video you're watching",
+  "permissions": ["activeTab", "storage"],
+  "host_permissions": ["https://www.youtube.com/*"],
+  "background": {
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
       "matches": ["https://www.youtube.com/*"],
-      "js": ["content.js"]
+      "js": ["content.js"],
+      "run_at": "document_idle"
     }
-  ]
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
 }

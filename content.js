@@ -1,8 +1,23 @@
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === "GET_TRANSCRIPT") {
-    // Logic to get the transcript from the YouTube page
-    // This can involve querying elements on the page or using YouTube API if available
-    const transcript = "Extracted transcript text"; // Placeholder
-    sendResponse({ transcript });
+console.log("Content script loaded");
+// alert("YouTube Q&A Content Script Loaded");
+
+function getVideoInfo() {
+  const videoTitle =
+    document.querySelector("h1.ytd-video-primary-info-renderer")?.textContent ||
+    "";
+  const videoDescription =
+    document.querySelector("#description-text")?.textContent || "";
+  console.log("Video info retrieved:", {
+    title: videoTitle,
+    description: videoDescription,
+  });
+  return { title: videoTitle, description: videoDescription };
+}
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "getVideoInfo") {
+    const videoInfo = getVideoInfo();
+    console.log("Sending video info back:", videoInfo);
+    sendResponse(videoInfo);
   }
 });
