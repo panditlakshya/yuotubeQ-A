@@ -53,6 +53,22 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const { title, description } = response;
+      console.log("Video info:", { title, description, response });
+      // fetch('http://localhost:5000/ask', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body: JSON.stringify({ question, transcript })
+      // })
+      // .then(res => res.json())
+      // .then(data => {
+      //   document.getElementById('response').innerText = data.answer;
+      // })
+      // .catch(error => {
+      //   console.error('Error:', error);
+      //   document.getElementById('response').innerText = 'An error occurred while processing your request.';
+      // });
 
       const placeholderAnswer = `Question: ${question}\n\nBased on the video "${title}", here's a placeholder answer. In a real implementation, you would send this data to an AI service to generate a relevant response.`;
 
