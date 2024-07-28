@@ -5,44 +5,32 @@
     <link href="output.css" rel="stylesheet" />
     <style>
       body {
-        width: 300px;
-        padding: 10px;
+        width: 400px;
       }
     </style>
   </head>
-  <body>
-    <div class="flex flex-col gap-1 h-80 text-xs">
-      <div class="flex flex-col flex-1 gap-1 overflow-auto p-2">
-        <div class="text-right">
-          <div
-            id="question-value"
-            class="inline-block border border-1 px-2 py-1 bg-cyan-100 text-black rounded-lg"
-          >
-            lorem ipsum
-          </div>
-        </div>
-        <div class="text-left">
-          <div
-            id="answer"
-            class="inline-block border border-1 px-2 py-1 bg-lime-600 text-black rounded-lg"
-          >
-            lorem ipsum
-          </div>
-        </div>
-      </div>
+  <body class="bg-gray-100 p-2">
+    <div class="max-w-md mx-auto shadow-md overflow-hidden">
+      <div class="p-1">
+        <h1 class="text-xl font-bold mb-4">YouTube Video Assistant</h1>
+        <div
+          id="message-box"
+          class="h-64 overflow-y-auto mb-4 p-2 bg-gray-50 rounded"
+        ></div>
 
-      <div class="flex flex-row justify-between w-full">
-        <input
-          class="border border-1 border-gray-300 rounded-md flex-1 p-1 mr-2"
-          id="question"
-          placeholder="Type your question here..."
-        />
-        <button
-          class="border bg-lime-600 text-white py-1 px-2 rounded-md"
-          id="submit"
-        >
-          Ask
-        </button>
+        <div class="flex flex-row justify-between w-full">
+          <input
+            class="border border-1 border-gray-300 rounded-md flex-1 p-1 mr-2"
+            id="question"
+            placeholder="Ask a question"
+          />
+          <button
+            class="border bg-lime-600 text-white py-1 px-2 rounded-md"
+            id="submit"
+          >
+            Ask
+          </button>
+        </div>
       </div>
     </div>
 
