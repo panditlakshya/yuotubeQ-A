@@ -56,13 +56,67 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialize chatbot with apiToken if needed
   }
 
+  function markdownToHtml(markdown) {
+    // First, handle code blocks
+    markdown = markdown.replace(/```([\s\S]*?)```/g, function (match, p1) {
+      return (
+        "<pre><code>" +
+        p1.replace(/</g, "&lt;").replace(/>/g, "&gt;") +
+        "</code></pre>"
+      );
+    });
+
+    // Convert headers
+    markdown = markdown.replace(/^### (.*$)/gim, "<h3>$1</h3>");
+    markdown = markdown.replace(/^## (.*$)/gim, "<h2>$1</h2>");
+    markdown = markdown.replace(/^# (.*$)/gim, "<h1>$1</h1>");
+
+    // Convert bold
+    markdown = markdown.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+    // Convert italic
+    markdown = markdown.replace(/\*(.*?)\*/g, "<em>$1</em>");
+
+    // Convert inline code (after handling code blocks)
+    markdown = markdown.replace(/`([^`]+)`/g, "<code>$1</code>");
+
+    // Convert links
+    markdown = markdown.replace(
+      /\[([^\]]+)\]\(([^\)]+)\)/g,
+      '<a href="$2">$1</a>'
+    );
+
+    // Convert line breaks
+    markdown = markdown.replace(/\n/g, "<br>");
+
+    return markdown;
+  }
+
   function addMessage(content, isUser = false) {
     const messageDiv = document.createElement("div");
     messageDiv.className = `mb-2 p-2 rounded ${
       isUser ? "bg-blue-100 text-right" : "bg-gray-200"
     }`;
-    messageDiv.textContent = content;
-    messageBoxDiv.appendChild(messageDiv);
+
+    // Convert markdown to HTML
+    const convertedHtml = markdownToHtml(content);
+    console.log(convertedHtml, "convertedHtml");
+
+    // Use a temporary div to parse the HTML string
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = convertedHtml;
+
+    // Append all child nodes to the container
+    while (tempDiv.firstChild) {
+      messageDiv.appendChild(tempDiv.firstChild);
+    }
+
+    const messageWrapper = document.createElement("div");
+    messageWrapper.classList.add("chat-message");
+    messageWrapper.appendChild(messageDiv);
+
+    messageBoxDiv.appendChild(messageWrapper);
+
     messageBoxDiv.scrollTop = messageBoxDiv.scrollHeight;
   }
 
@@ -132,4 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
   addMessage(
     "Hello! I'm here to help you with questions about the YouTube video you're watching. What would you like to know?"
   );
+  // addMessage(
+  //   "The code is below:```function test() {\n  console.log('Hello');\n}\n```"
+  // );
 });

@@ -800,3 +800,38 @@ video {
 .focus\:ring-opacity-75:focus {
   --tw-ring-opacity: 0.75;
 }
+
+//custom css
+.chat-message {
+  font-family: Arial, sans-serif;
+  /* line-height: 1.6; */
+}
+
+.chat-message h1,
+.chat-message h2,
+.chat-message h3 {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.chat-message code {
+  background-color: #f4f4f4;
+  padding: 2px 2px;
+  border-radius: 3px;
+}
+
+.chat-message pre {
+  background-color: #f4f4f4;
+  padding: 8px;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+.chat-message a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.chat-message a:hover {
+  text-decoration: underline;
+}
