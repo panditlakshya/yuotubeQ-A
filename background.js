@@ -1,4 +1,4 @@
-console.log("Content.js is loaded");
+console.log("Background.js is loaded");
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log("Background script received message:", request);
   if (request.action === "getVideoInfo") {
@@ -27,5 +27,3 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true; // Indicates that the response is sent asynchronously
   }
 });
-
-console.log("Background script loaded");

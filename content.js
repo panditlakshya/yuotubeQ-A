@@ -74,6 +74,7 @@ function compareTracks(track1, track2) {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "getVideoInfo") {
+    console.log("I am here, getting video info");
     const videoId = getVideoId();
     if (videoId) {
       reteriveTranscript(videoId)

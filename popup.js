@@ -4,6 +4,49 @@ document.addEventListener("DOMContentLoaded", () => {
   const submitButton = document.getElementById("submit");
   const answerDiv = document.getElementById("answer");
   const messageBoxDiv = document.getElementById("message-box");
+  const credentialsContainer = document.getElementById("credentials-container");
+  const chatbotContainer = document.getElementById("chatbot-container");
+  const apiTokenInput = document.getElementById("apiToken");
+  const saveButton = document.getElementById("saveButton");
+  const removeApiTokenButton = document.getElementById("remove-api-token");
+
+  chrome.storage.sync.get("gptApiToken", function (data) {
+    if (data.gptApiToken) {
+      showChatbot(data.gptApiToken);
+    } else {
+      showCredentialsInput();
+    }
+  });
+
+  saveButton.addEventListener("click", function () {
+    const apiToken = apiTokenInput.value;
+    if (apiToken) {
+      chrome.storage.sync.set({ gptApiToken: apiToken }, function () {
+        console.log("API token saved");
+        showChatbot(apiToken);
+      });
+    } else {
+      alert("Please enter a valid API token");
+    }
+  });
+
+  removeApiTokenButton.addEventListener("click", function () {
+    chrome.storage.sync.remove("gptApiToken", function () {
+      console.log("API token cleared");
+      showCredentialsInput();
+    });
+  });
+
+  function showCredentialsInput() {
+    credentialsContainer.classList.remove("hidden");
+    chatbotContainer.classList.add("hidden");
+  }
+
+  function showChatbot(apiToken) {
+    credentialsContainer.classList.add("hidden");
+    chatbotContainer.classList.remove("hidden");
+    // Initialize chatbot with apiToken if needed
+  }
 
   function addMessage(content, isUser = false) {
     const messageDiv = document.createElement("div");
@@ -62,6 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
       submitButton.click();
     }
   });
+
   addMessage(
     "Hello! I'm here to help you with questions about the YouTube video you're watching. What would you like to know?"
   );
