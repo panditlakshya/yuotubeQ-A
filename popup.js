@@ -18,13 +18,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  saveButton.addEventListener("click", function () {
+  saveButton.addEventListener("click", async function () {
     const apiToken = apiTokenInput.value;
     if (apiToken) {
-      chrome.storage.sync.set({ gptApiToken: apiToken }, function () {
-        console.log("API token saved");
-        showChatbot(apiToken);
-      });
+      try {
+        const encryptedToken = await encryptApiToken(apiToken);
+
+        chrome.storage.sync.set({ gptApiToken: encryptedToken }, function () {
+          console.log("API token saved");
+          showChatbot(apiToken);
+        });
+      } catch (error) {
+        console.error("Encryption failed:", error);
+        alert("Failed to encrypt and save API token");
+      }
     } else {
       alert("Please enter a valid API token");
     }
@@ -34,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chrome.storage.sync.remove("gptApiToken", function () {
       console.log("API token cleared");
       showCredentialsInput();
+      apiTokenInput.value = "";
     });
   });
 
@@ -58,6 +66,40 @@ document.addEventListener("DOMContentLoaded", () => {
     messageBoxDiv.scrollTop = messageBoxDiv.scrollHeight;
   }
 
+  function sendEncryptedTokenToBackend(question, response) {
+    chrome.storage.sync.get("gptApiToken", function (data) {
+      if (data.gptApiToken) {
+        fetch("http://localhost:3000/ask", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            question,
+            transcript: response,
+            token: data.gptApiToken,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data.answer, "response answer");
+            messageBoxDiv.removeChild(messageBoxDiv.lastChild); // Remove "Thinking..." message
+            addMessage(data.answer);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            messageBoxDiv.removeChild(messageBoxDiv.lastChild); // Remove "Thinking..." message
+            addMessage(
+              error.message ??
+                "An error occurred while processing your request."
+            );
+          });
+      } else {
+        console.error("No encrypted token found");
+      }
+    });
+  }
+
   submitButton.addEventListener("click", () => {
     const question = questionInput.value;
     addMessage(question, true);
@@ -77,26 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      fetch("http://localhost:3000/ask", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ question, transcript: response }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data.answer, "response answer");
-          messageBoxDiv.removeChild(messageBoxDiv.lastChild); // Remove "Thinking..." message
-          addMessage(data.answer);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          messageBoxDiv.removeChild(messageBoxDiv.lastChild); // Remove "Thinking..." message
-          addMessage(
-            error.message ?? "An error occurred while processing your request."
-          );
-        });
+      sendEncryptedTokenToBackend(question, response);
     });
   });
 
