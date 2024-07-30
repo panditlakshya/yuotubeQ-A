@@ -1,18 +1,44 @@
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Popup DOM loaded");
+  // console.log("Popup DOM loaded");
   const questionInput = document.getElementById("question");
   const submitButton = document.getElementById("submit");
-  const answerDiv = document.getElementById("answer");
+  // const answerDiv = document.getElementById("answer");
   const messageBoxDiv = document.getElementById("message-box");
   const credentialsContainer = document.getElementById("credentials-container");
   const chatbotContainer = document.getElementById("chatbot-container");
   const apiTokenInput = document.getElementById("apiToken");
   const saveButton = document.getElementById("saveButton");
   const removeApiTokenButton = document.getElementById("remove-api-token");
+  const warningElement = document.getElementById("warning");
+
+  function isYouTubeVideoPage(url) {
+    // YouTube video URLs typically contain "youtube.com/watch"
+    return url.includes("youtube.com/watch");
+  }
+
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    let currentTab = tabs[0];
+    if (currentTab && currentTab.url) {
+      if (isYouTubeVideoPage(currentTab.url)) {
+        chrome.storage.sync.get("gptApiToken", function (data) {
+          if (data.gptApiToken) {
+            showChatbot();
+          } else {
+            showCredentialsInput();
+          }
+        });
+        warningElement.classList.add("hidden");
+      } else {
+        // credentialsContainer.classList.add("hidden");
+        // chatbotContainer.classList.add("hidden");
+        warningElement.classList.remove("hidden");
+      }
+    }
+  });
 
   chrome.storage.sync.get("gptApiToken", function (data) {
     if (data.gptApiToken) {
-      showChatbot(data.gptApiToken);
+      showChatbot();
     } else {
       showCredentialsInput();
     }
@@ -26,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         chrome.storage.sync.set({ gptApiToken: encryptedToken }, function () {
           console.log("API token saved");
-          showChatbot(apiToken);
+          showChatbot();
         });
       } catch (error) {
         console.error("Encryption failed:", error);
@@ -50,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chatbotContainer.classList.add("hidden");
   }
 
-  function showChatbot(apiToken) {
+  function showChatbot() {
     credentialsContainer.classList.add("hidden");
     chatbotContainer.classList.remove("hidden");
     // Initialize chatbot with apiToken if needed
@@ -123,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function sendEncryptedTokenToBackend(question, response) {
     chrome.storage.sync.get("gptApiToken", function (data) {
       if (data.gptApiToken) {
-        fetch("http://localhost:3000/ask", {
+        fetch(config.API_URL, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -163,13 +189,20 @@ document.addEventListener("DOMContentLoaded", () => {
     chrome.runtime.sendMessage({ action: "getVideoInfo" }, (response) => {
       if (chrome.runtime.lastError) {
         console.error("Error in sendMessage:", chrome.runtime.lastError);
-        answerDiv.textContent = `Error: ${chrome.runtime.lastError.message}`;
+        // answerDiv.textContent = `Error: ${chrome.runtime.lastError.message}`;
+        messageBoxDiv.removeChild(messageBoxDiv.lastChild); // Remove "Thinking..." message
+        addMessage("Please try reloading the youtube page.");
         return;
       }
 
       if (response.error) {
         console.error("Error in response:", response.error);
-        answerDiv.textContent = `Error: ${response.error}`;
+        // answerDiv.textContent = `Error: ${response.error}`;
+        messageBoxDiv.removeChild(messageBoxDiv.lastChild); // Remove "Thinking..." message
+        // addMessage(`Error: ${response.error}`);
+        addMessage(
+          "Extension only works for youtube videos. Please open a youtube video and try again."
+        );
         return;
       }
 
@@ -186,7 +219,4 @@ document.addEventListener("DOMContentLoaded", () => {
   addMessage(
     "Hello! I'm here to help you with questions about the YouTube video you're watching. What would you like to know?"
   );
-  // addMessage(
-  //   "The code is below:```function test() {\n  console.log('Hello');\n}\n```"
-  // );
 });
