@@ -3,7 +3,7 @@
   "name": "YouTube Video Q&A",
   "version": "1.0",
   "description": "Ask questions about the YouTube video you're watching",
-  "permissions": ["activeTab", "storage", "https://www.youtube.com/*"],
+  "permissions": ["activeTab", "storage"],
   "host_permissions": ["https://www.youtube.com/*"],
   "background": {
     "service_worker": "background.js"
@@ -13,12 +13,18 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.youtube.com/*"],
+      "matches": ["https://www.youtube.com/*", "https://youtube.com/*"],
       "js": ["content.js"]
     }
   ],
   "action": {
     "default_popup": "popup.html",
     "default_logo": "youtu.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["config.js"],
+      "matches": ["https://www.youtube.com/*", "https://youtube.com/*"]
+    }
+  ]
 }

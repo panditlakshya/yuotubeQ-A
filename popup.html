@@ -5,6 +5,9 @@
     <link href="output.css" rel="stylesheet" />
   </head>
   <body class="w-96 bg-gray-100 p-2">
+    <div id="warning" class="text-red-500 hidden w-full text-center">
+      This extension only works on YouTube video pages.
+    </div>
     <div
       id="credentials-container"
       class="px-4 py-4 h-64 flex-grow flex flex-col justify-center items-center"
@@ -63,6 +66,7 @@
         </div>
       </div>
     </div>
+    <script src="config.js"></script>
     <script src="encrypt.js"></script>
     <script src="popup.js"></script>
   </body>
