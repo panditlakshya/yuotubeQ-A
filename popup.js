@@ -29,8 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         warningElement.classList.add("hidden");
       } else {
-        // credentialsContainer.classList.add("hidden");
-        // chatbotContainer.classList.add("hidden");
         warningElement.classList.remove("hidden");
       }
     }
@@ -156,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
           },
           body: JSON.stringify({
             question,
-            transcript: response,
+            transcript: response?.transcript,
             token: data.gptApiToken,
           }),
         })
@@ -189,7 +187,6 @@ document.addEventListener("DOMContentLoaded", () => {
     chrome.runtime.sendMessage({ action: "getVideoInfo" }, (response) => {
       if (chrome.runtime.lastError) {
         console.error("Error in sendMessage:", chrome.runtime.lastError);
-        // answerDiv.textContent = `Error: ${chrome.runtime.lastError.message}`;
         messageBoxDiv.removeChild(messageBoxDiv.lastChild); // Remove "Thinking..." message
         addMessage("Please try reloading the youtube page.");
         return;
@@ -197,9 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (response.error) {
         console.error("Error in response:", response.error);
-        // answerDiv.textContent = `Error: ${response.error}`;
         messageBoxDiv.removeChild(messageBoxDiv.lastChild); // Remove "Thinking..." message
-        // addMessage(`Error: ${response.error}`);
         addMessage(
           "Extension only works for youtube videos. Please open a youtube video and try again."
         );
@@ -213,6 +208,12 @@ document.addEventListener("DOMContentLoaded", () => {
   questionInput.addEventListener("keypress", function (e) {
     if (e.key === "Enter") {
       submitButton.click();
+    }
+  });
+
+  apiTokenInput.addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      saveButton.click();
     }
   });
 
