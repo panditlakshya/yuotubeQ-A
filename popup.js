@@ -1,8 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // console.log("Popup DOM loaded");
   const questionInput = document.getElementById("question");
   const submitButton = document.getElementById("submit");
-  // const answerDiv = document.getElementById("answer");
   const messageBoxDiv = document.getElementById("message-box");
   const credentialsContainer = document.getElementById("credentials-container");
   const chatbotContainer = document.getElementById("chatbot-container");
@@ -124,7 +122,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Convert markdown to HTML
     const convertedHtml = markdownToHtml(content);
-    console.log(convertedHtml, "convertedHtml");
 
     // Use a temporary div to parse the HTML string
     const tempDiv = document.createElement("div");
@@ -160,7 +157,6 @@ document.addEventListener("DOMContentLoaded", () => {
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log(data.answer, "response answer");
             messageBoxDiv.removeChild(messageBoxDiv.lastChild); // Remove "Thinking..." message
             addMessage(data.answer);
           })
